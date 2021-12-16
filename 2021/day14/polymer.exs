@@ -27,7 +27,7 @@ defmodule Polymer do
   def stats(polymer) do
     polymer
     |> String.to_charlist()
-    |> Enum.frequencies_by(&List.to_string([&1]))
+    |> Enum.frequencies_by(&<<&1>>)
   end
 
   def score(stats) do
