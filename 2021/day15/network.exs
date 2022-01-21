@@ -55,8 +55,8 @@ defmodule RepeatedGraph do
          col_quadrant < rpmap.height_repetition and
          row >= 0 and
          col >= 0 do
-      increment = row_quadrant + col_quadrant - 1
-      rem(rpmap.data[{row, col}] + increment, 9) + 1
+      increment = row_quadrant + col_quadrant
+      rem(rpmap.data[{row, col}] + increment - 1, 9) + 1
     else
       nil
     end
