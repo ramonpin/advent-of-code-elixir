@@ -7,11 +7,11 @@ defmodule Smoke do
   end
 
   def get_minimuns(smoke_map) do
-    Enum.filter(smoke_map, fn {pos, v} -> check_minimun(pos, v, smoke_map)  end)
+    Enum.filter(smoke_map, fn {pos, v} -> check_minimun(pos, v, smoke_map) end)
   end
 
   def calc_total_risk(minimuns) do
-    Enum.reduce(minimuns, 0 , fn {_, v}, risk -> risk + v + 1 end)
+    Enum.reduce(minimuns, 0, fn {_, v}, risk -> risk + v + 1 end)
   end
 
   def run(file) do
@@ -19,6 +19,15 @@ defmodule Smoke do
     |> then(&data/1)
     |> then(&get_minimuns/1)
     |> then(&calc_total_risk/1)
+  end
+
+  def neightbours(r, c) do
+    [
+      {r - 1, c},
+      {r, c - 1},
+      {r, c + 1},
+      {r + 1, c}
+    ]
   end
 
   defp coords({line, i}) do
@@ -31,15 +40,9 @@ defmodule Smoke do
 
   defp check_minimun({r, c}, current, smoke_map) do
     neightbours = neightbours(r, c)
-    Enum.all?(neightbours, fn pos -> Map.get(smoke_map, pos, 10) > current end)
-  end
-
-  defp neightbours(r, c) do
-    [
-      {r - 1, c},
-      {r, c - 1},
-      {r, c + 1},
-      {r + 1, c}
-    ]
+    Enum.all?(neightbours, fn pos -> Map.get(smoke_map, pos, 9) > current end)
   end
 end
+
+IO.puts(Smoke.run("sample.txt") == 15)
+IO.puts(Smoke.run("input.txt") == 600)
