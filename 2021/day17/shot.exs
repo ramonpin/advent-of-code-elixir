@@ -3,19 +3,38 @@ defmodule Shot do
     defstruct x: 0, y: 0, vx: 0, vy: 0, max_y: 0, status: :continue
   end
 
-  def run(vx, vy) do
-    %Probe{vx: vx, vy: vy}
-    |> Stream.iterate(&step/1)
-    |> Stream.map(&hit_or_miss(&1, {20, 30, -5, -10}))
-    |> Stream.reject(fn probe -> probe.status == :continue end)
-    |> Enum.take(1)
+  def run(box) do
+    {_, x_max, _, y_min} = box
+
+    # The velocity limits are totaly an educated guess
+    # no physics behind this, just brute force
+    for vx <- 0..(x_max * 2),
+        vy <- 0..(abs(y_min) * 2),
+        trial = launch(vx, vy, box),
+        trial.status == :hit,
+        reduce: {%Probe{max_y: -1}, nil} do
+      {best, vel} ->
+        if trial.max_y > best.max_y do
+          {trial, {vx, vy}}
+        else
+          {best, vel}
+        end
+    end
   end
 
-  defp hit_or_miss(%Probe{} = probe, {x1, x2, y1, y2}) do
+  def launch(vx, vy, box) do
+    %Probe{vx: vx, vy: vy}
+    |> Stream.iterate(&step/1)
+    |> Stream.map(&hit_or_miss(&1, box))
+    |> Stream.reject(fn probe -> probe.status == :continue end)
+    |> Enum.at(0)
+  end
+
+  defp hit_or_miss(%Probe{} = probe, {x_min, x_max, y_max, y_min}) do
     status =
       cond do
-        probe.x > x2 or probe.y < y2 -> :miss
-        probe.x >= x1 and probe.y <= y1 -> :hit
+        probe.x > x_max or probe.y < y_min -> :miss
+        probe.x >= x_min and probe.y <= y_max -> :hit
         true -> :continue
       end
 
@@ -40,3 +59,9 @@ defmodule Shot do
     end
   end
 end
+
+{shot, _vel} = Shot.run({20, 30, -5, -10})
+IO.puts(shot.max_y == 45)
+
+{shot, _vel} = Shot.run({70, 96, -124, -179})
+IO.puts(shot.max_y == 15931)
