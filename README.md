@@ -7,4 +7,4 @@ I'm going to solve all of them but asynchronously with the advent period.
 # Note
 
 My intention is to learn by doing the challenges and I am not trying to say
-my solutions are the better or the more idiomatic, even when I try to.
+my solutions are the best or the more idiomatic, even when I try to.
