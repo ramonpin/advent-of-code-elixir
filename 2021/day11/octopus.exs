@@ -5,7 +5,7 @@ defmodule Octopus do
       |> Stream.map(&String.trim/1)
 
     for {line, row} <- Enum.with_index(data),
-        {octopus, col} <- Enum.with_index(String.to_char_list(line)),
+        {octopus, col} <- Enum.with_index(to_charlist(line)),
         into: %{},
         do: {{row, col}, octopus - ?0}
   end
